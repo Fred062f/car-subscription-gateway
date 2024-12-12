@@ -63,15 +63,3 @@ The gateway provides access to these services:
    curl http://localhost:5000/vehicles/list \
    -H "Authorization: Bearer <your_token>"
    ```
-
-4. **Integrate with Frontend/Client Applications**  
-   Point your frontend or client code to the API gateway instead of individual service URLs for a simplified architecture.
-
-## Customization
-
-- **Add/Remove Services**: Modify the `SERVICE_URLS` dictionary at the top of `app.py` to point to new or different service URLs.
-- **Additional Headers or Middleware**: Add custom logic before forwarding requests by modifying the `route_request` functions.
-
-## License
-
-MIT License
