@@ -8,8 +8,8 @@ SERVICE_URLS = {
     "users": "https://users-service-fkgvgpfscqa3cjg8.northeurope-01.azurewebsites.net",
     "subscriptions": "https://subscription-service-bxffbmd0bydahpeu.northeurope-01.azurewebsites.net",
     "vehicles": "https://vehicle-service-fwdhc6gzavcgagd4.northeurope-01.azurewebsites.net",
-    "service": "http://localhost:5004",
-    "damages": "http://localhost:5005",
+    "service": "https://service-f2adg7eacrdfc5b0.northeurope-01.azurewebsites.net",
+    "damages": "https://damage-service-fnbadrb9bnh8fvc3.northeurope-01.azurewebsites.net",
     "invoice": "https://invoice-service-b4a7cgbqgtejgpdw.northeurope-01.azurewebsites.net"
 }
 
@@ -50,7 +50,7 @@ def route_request(service, endpoint):
     method = request.method
     url = f"{SERVICE_URLS[service]}/{endpoint}"
     
-     # Check if the request has a valid JSON body
+    # Check if the request has a valid JSON body
     if request.is_json:
         data = request.json
     else:
@@ -64,6 +64,22 @@ def route_request(service, endpoint):
         response = requests.put(url, headers=headers, json=data)
     elif method == "DELETE":
         response = requests.delete(url, headers=headers)
+
+    return (response.text, response.status_code, response.headers.items())
+
+
+@app.route('/<service>/', methods=['GET'])
+def route_request_index(service):
+    if service not in SERVICE_URLS:
+        return jsonify({"error": "Service not found"}), 404
+
+    headers = {
+        "Authorization": request.headers.get("Authorization")
+    }
+
+    url = f"{SERVICE_URLS[service]}/"
+
+    response = requests.get(url, headers=headers, params=request.args)
 
     return (response.text, response.status_code, response.headers.items())
 
