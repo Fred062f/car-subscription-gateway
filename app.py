@@ -1,5 +1,6 @@
-from flask import Flask, request, jsonify, Response
+from flask import Flask, request, jsonify, Response, redirect
 import requests
+
 
 app = Flask(__name__)
 
@@ -47,6 +48,11 @@ def route_request(service, endpoint):
     headers = {
         "Authorization": request.headers.get("Authorization")
     }
+
+    # Redirect, otherwise it's causing trouble with loading static files
+    if endpoint == 'apidocs':
+        return redirect(f"{SERVICE_URLS[service]}/{endpoint}", code=302)
+
     method = request.method
     url = f"{SERVICE_URLS[service]}/{endpoint}"
     
@@ -67,7 +73,6 @@ def route_request(service, endpoint):
 
     return (response.text, response.status_code, response.headers.items())
 
-
 @app.route('/<service>/', methods=['GET'])
 def route_request_index(service):
     if service not in SERVICE_URLS:
@@ -78,9 +83,7 @@ def route_request_index(service):
     }
 
     url = f"{SERVICE_URLS[service]}/"
-
     response = requests.get(url, headers=headers, params=request.args)
-
     return (response.text, response.status_code, response.headers.items())
 
 if __name__ == '__main__':
